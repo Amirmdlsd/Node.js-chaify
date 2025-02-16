@@ -1,6 +1,4 @@
 const {Router} = require('express')
-const {registerValidator} = require('./validator')
-const bcrypt = require('bcrypt')
 const DbController = require('./db')
 
 const router = Router()

@@ -23,7 +23,7 @@ module.exports = new (class {
 
             if (existUser) {
                 console.log(existUser)
-                throw new Error('user already exist')
+                return {success: false, message: "User already exist"};
             }
 
             const res = await db.collection('user').insertOne(data)
@@ -47,7 +47,27 @@ module.exports = new (class {
             const db = await this.client.db('chatify');
             return await db.collection('user').findOne({user_name: data});
         } catch (err) {
-            throw new Error(err)
+            console.log(err)
+            return {
+                success: falsem, message: e.message
+            }
+        }
+    }
+
+
+    async updateOne(id, data) {
+        try {
+            return this.client.db("chatify").collection("user").updateOne(
+                {_id: id}, {$set: data}, (error, res) => {
+                    if (err) throw err;
+                    db.close();
+                    throw err;
+                });
+
+        } catch (e) {
+            return {
+                success: falsem, message: e.message
+            }
         }
     }
 

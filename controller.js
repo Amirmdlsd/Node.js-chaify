@@ -12,18 +12,20 @@ module.exports = new (class {
         const {user_name, full_name} = req.body;
         const salt = await bcrypt.genSalt(10)
         const password = await bcrypt.hash(req.body.password, salt);
-        const result = await DB.create({user_name, full_name, password})
+        console.log(data)
 
+        const result = await DB.create({user_name, full_name, password})
+        const token = await jwt.sign({_id: result._id, user_name}, "*this-is-secret-key*")
+        await DB.updateOne(result._id, {token})
         if (!result.success) {
             return res.status(400).json({
                 result
             })
         }
-        const token = await jwt.sign({_id: data.id, user_name}, "*this-is-secret-key*")
 
         return res.status(200).json({
             success: true, result: result, token
-    })
+        })
     }
 
     async login(req, res) {
@@ -41,6 +43,7 @@ module.exports = new (class {
             return response.status(400).json({error: "User does not exist"})
         }
         const token = await jwt.sign({_id: data.id, user_name}, "*this-is-secret-key*")
+        await DB.findOn(data._idm, {token})
         return res.status(200).json({
             success: true, message: 'User login successfully', token
         })

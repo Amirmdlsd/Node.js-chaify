@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt')
 const {registerValidator, loginValidator} = require('./validator')
 const DB = require('./db');
 const {response} = require("express");
-const constants = require("node:constants");
 const jwt = require("jsonwebtoken")
 
 module.exports = new (class {
@@ -15,7 +14,8 @@ module.exports = new (class {
         console.log(data)
 
         const result = await DB.create({user_name, full_name, password})
-        const token = await jwt.sign({_id: result._id, user_name}, "*this-is-secret-key*")
+        const token = await jwt.sign({_id: result._id, user_name},
+            "*this-is-secret-key*")
         await DB.updateOne(result._id, {token})
         if (!result.success) {
             return res.status(400).json({
@@ -43,7 +43,7 @@ module.exports = new (class {
             return response.status(400).json({error: "User does not exist"})
         }
         const token = await jwt.sign({_id: data.id, user_name}, "*this-is-secret-key*")
-        await DB.findOn(data._idm, {token})
+        await DB.findOn(data._id, {token})
         return res.status(200).json({
             success: true, message: 'User login successfully', token
         })
